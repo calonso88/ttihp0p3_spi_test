@@ -51,7 +51,7 @@ module tt_um_calonso88_spi_test (
   
   // Bi direction IOs [7] and [2:0] as outputs
   assign uio_oe[7]   = 1'b0;
-  assign uio_oe[2:0] = 2'b000;
+  assign uio_oe[2:0] = 3'b000;
 
   // Input ports
   assign cpol       = ui_in[2];
