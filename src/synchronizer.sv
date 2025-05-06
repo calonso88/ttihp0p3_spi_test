@@ -3,30 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-module synchronizer #(parameter int WIDTH = 4) (rstb, clk, ena, data_in, data_out);
+module synchronizer #(parameter int STAGES = 2, parameter int WIDTH = 4) (rstb, clk, ena, data_in, data_out);
 
   input logic rstb;
   input logic clk;
   input logic ena;
   input logic [WIDTH-1:0] data_in;
-
   output logic [WIDTH-1:0] data_out;
 
-  logic [WIDTH-1:0] data_sync;
-  logic [WIDTH-1:0] data_sync2;
+  logic [WIDTH-1:0] data_sync [STAGES+1];
 
-  always_ff @(negedge(rstb) or posedge(clk)) begin
-    if (!rstb) begin
-      data_sync <= '0;
-      data_sync2 <= '0;
-    end else begin
-      if (ena == 1'b1) begin
-        data_sync <= data_in;
-        data_sync2 <= data_sync;
-      end
+  assign data_sync[0] = data_in;
+
+  generate
+    for (genvar i=0; i<STAGES; i++) begin : gen_reclocking
+      reclocking #(.WIDTH(WIDTH)) reclocking_i0 (.rstb(rstb), .clk(clk), .ena(ena), .data_in(data_sync[i]), .data_out(data_sync[i+1]));
     end
-  end
+  endgenerate
 
-  assign data_out = data_sync2;
+  assign data_out = data_sync[STAGES];
 
 endmodule
