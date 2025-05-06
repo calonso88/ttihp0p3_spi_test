@@ -66,7 +66,7 @@ module tt_um_calonso88_spi_test (
   assign spi_mosi  = uio_in[6];
 
   // Bi-directional Output ports
-  assign uio_out[3] = spi_miso;
+  assign uio_out[3] = spi_cs_n_sync ? 1'bz : spi_miso;
   // Unused ouputs needs to be assigned to 0.
   assign uio_out[2:0] = 3'b000;
   assign uio_out[7:4] = 4'b0000;
