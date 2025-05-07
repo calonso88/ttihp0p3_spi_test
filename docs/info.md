@@ -12,9 +12,9 @@ You can also include images in this folder and reference them in the markdown. E
 SPI test design based from https://github.com/calonso88/tt07_alu_74181
 See that design's docs for information about the SPI peripheral.
 
-Small update done on the spi_reg module. There used to be two buffer counters (one for RX and one for TX).
-Since the counters are not used together, it was possible to remove one of them and use 1 buffer counter only.
-This saves 4 flip flops and a bit of combinatorial logic in the end.
+Small improvement done on the spi_reg module. There used to be two buffer counters (one for RX and one for TX).
+Since the counters are not used together, it was possible to remove one of them and use a single buffer counter.
+This has reduced 4 flip flops in total and some combinatorial logic as well.
 
 Design been configured with 8 read/write 8 bit registers and 8 read only 8 bit status registers.
 
