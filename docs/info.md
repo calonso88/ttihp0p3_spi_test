@@ -10,6 +10,7 @@ You can also include images in this folder and reference them in the markdown. E
 ## How it works
 
 SPI test design based from https://github.com/calonso88/tt07_alu_74181
+
 See that design's docs for information about the SPI peripheral.
 
 Small improvement done on the spi_reg module. There used to be two buffer counters (one for RX and one for TX).
@@ -43,15 +44,9 @@ Example code to write 0xF8 to address[0]:
 spi_cs(0); spi.write(b'\x80\xF8'); spi_cs(1)
 ```
 
-This should set the 7 segment LED to 0xF8 which will (display "t.").
-Seg A - OFF
-Seg B - OFF
-Seg C - OFF
-Seg D - ON
-Seg E - ON
-Seg F - ON
-Seg G - ON
-Seg DP - ON
+This should set the 7 segment LED to 0xF8 which will display "t."
+
+Seg A - OFF, Seg B - OFF, Seg C - OFF, Seg D - ON, Seg E - ON, Seg F - ON, Seg G - ON, Seg DP - ON
 
 Example code to read from address[0]:
 ```txt
