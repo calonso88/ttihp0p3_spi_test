@@ -17,6 +17,9 @@ Small improvement done on the spi_reg module. There used to be two buffer counte
 Since the counters are not used together, it was possible to remove one of them and use a single buffer counter.
 This has reduced 4 flip flops in total and some combinatorial logic as well.
 
+Added logic to control driver for MISO. On previous submissions of this design, the MISO was always driven.
+Logic has been added to put MISO into high impedance when CS_N is driven high. Due to a 2-stage synchronizer, the MISO goes to high impedance after 2 clock cycles.
+
 Design been configured with 8 read/write 8 bit registers and 8 read only 8 bit status registers.
 
 The first read/write register also drives the 7 segment display.
