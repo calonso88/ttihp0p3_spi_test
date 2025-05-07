@@ -49,14 +49,14 @@ module tt_um_calonso88_spi_test (
   // Output ports (drive 7seg display) - Config Reg Address 0
   assign uo_out[7:0] = config_regs[7:0];
 
-  // Bi direction IOs [6:4] (cs_n, sclk, mosi) as inputs
+  // Bi direction IOs [6:4] (cs_n, sclk, mosi) always as inputs
   assign uio_oe[6:4] = 3'b000;
   // Bi direction IOs [3] - (miso) is controlled by spi_cs_n_sync
   // input port when spi_cs_n_sync = 1'b1
   // output port when spi_cs_n_sync = 1'b0
   assign uio_oe[3]   = spi_cs_n_sync ? 1'b0 : 1'b1;
 
-  // Bi direction IOs [7] and [2:0] always as inputs
+  // Bi direction IOs [7] and [2:0] unused always as inputs
   assign uio_oe[7]   = 1'b0;
   assign uio_oe[2:0] = 3'b000;
 
