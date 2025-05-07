@@ -46,7 +46,7 @@ module tt_um_calonso88_spi_test (
   assign cpol = ui_in[0];
   assign cpha = ui_in[1];
 
-  // Output ports - Config Reg address 0
+  // Output ports (drive 7seg display) - Config Reg Address 0
   assign uo_out[7:0] = config_regs[7:0];
 
   // Bi direction IOs [6:4] (cs_n, sclk, mosi) as inputs
@@ -56,7 +56,7 @@ module tt_um_calonso88_spi_test (
   // output port when spi_cs_n_sync = 1'b0
   assign uio_oe[3]   = spi_cs_n_sync ? 1'b0 : 1'b1;
 
-  // Bi direction IOs [7] and [2:0] as outputs
+  // Bi direction IOs [7] and [2:0] always as inputs
   assign uio_oe[7]   = 1'b0;
   assign uio_oe[2:0] = 3'b000;
 
@@ -67,12 +67,14 @@ module tt_um_calonso88_spi_test (
 
   // Bi-directional Output ports
   assign uio_out[3] = spi_miso;
-  //assign uio_out[3] = spi_cs_n_sync ? 1'bz : spi_miso;
 
-  // Unused ouputs needs to be assigned to 0.
+  // Bi-directional ouputs unused needs to be assigned to 0.
   assign uio_out[2:0] = 3'b000;
   assign uio_out[7:4] = 4'b0000;
 
+  // List all unused inputs to prevent warnings
+  wire _unused = &{ui_in[7:2], uio_in[7], uio_in[3:0], config_regs[63:8], 1'b0};
+  
   // Number of stages in each synchronizer
   localparam int SYNC_STAGES = 2;
   localparam int SYNC_WIDTH = 1;
