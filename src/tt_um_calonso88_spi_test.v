@@ -18,7 +18,7 @@ module tt_um_calonso88_spi_test (
 
   // Number of CFG Regs and Status Regs
   // Limitation: NUM_CFG must be equal to NUM_STATUS
-  localparam int NUM_CFG = 8;
+  localparam int NUM_CFG = 64;
   localparam int NUM_STATUS = NUM_CFG;
   // Size of Regs
   localparam int REG_WIDTH = 8;
