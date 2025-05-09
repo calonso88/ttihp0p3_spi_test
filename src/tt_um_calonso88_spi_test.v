@@ -18,7 +18,7 @@ module tt_um_calonso88_spi_test (
 
   // Number of CFG Regs and Status Regs
   // Limitation: NUM_CFG must be equal to NUM_STATUS
-  localparam int NUM_CFG = 8;
+  localparam int NUM_CFG = 16;
   localparam int NUM_STATUS = NUM_CFG;
   // Size of Regs
   localparam int REG_WIDTH = 8;
@@ -73,7 +73,7 @@ module tt_um_calonso88_spi_test (
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ui_in[7:2], uio_in[7], uio_in[3:0], config_regs[63:8], 1'b0};
+  wire _unused = &{ui_in[7:2], uio_in[7], uio_in[3:0], config_regs[127:8], 1'b0};
   
   // Number of stages in each synchronizer
   localparam int SYNC_STAGES = 2;
