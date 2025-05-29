@@ -21,7 +21,7 @@ project:
     - "spi_wrapper.sv"
     - "reclocking.sv"
     - "synchronizer.sv"
-    - "spi_reg.sv"
+    - "spi_peripheral.sv"
     - "falling_edge_detector.sv"
     - "rising_edge_detector.sv"
 

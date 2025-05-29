@@ -3,30 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-module spi_reg #(
+module spi_peripheral #(
     parameter int ADDR_W = 3,
     parameter int REG_W = 8
 ) (
-    input  logic clk,
-    input  logic rstb,
-    input  logic ena,
-    input  logic [1:0] mode,
-    input  logic spi_mosi,
-    output logic spi_miso,
-    input  logic spi_clk,
-    input  logic spi_cs_n,
-    output logic [ADDR_W-1:0] reg_addr,
-    input  logic [REG_W-1:0] reg_data_i,
-    output logic [REG_W-1:0] reg_data_o,
-    output logic reg_data_o_dv,
-    input  logic [7:0] status
+    input  logic 	      clk,
+    input  logic 	      rstb,
+    input  logic 	      ena,
+    // serial interface
+    input  logic [1:0]        mode,
+    input  logic 	      spi_mosi,
+    output logic 	      spi_miso,
+    input  logic 	      spi_clk,
+    input  logic 	      spi_cs_n,
+    // application interface
+    output logic              wr_rdn,
+    output logic [ADDR_W-1:0] addr,
+    input  logic [REG_W-1:0]  rdata,
+    output logic [REG_W-1:0]  wdata,
+    output logic 	      we,
+    input  logic [7:0] 	      status
 );
-
-  // Map to outputs
-  assign reg_addr = addr;
-  assign reg_data_o = data;
-  assign reg_data_o_dv = dv;
-  assign spi_miso = tx_buffer[REG_W-1];
 
   // Start of frame - negedge of spi_cs_n
   logic sof;
@@ -197,18 +194,18 @@ module spi_reg #(
   end
 
   // Addr and Read/Write Command register
-  logic [ADDR_W-1:0] addr;
+  logic [ADDR_W-1:0] reg_addr;
   logic reg_rw;
 
   // Addr and Read/Write Command Registers
   always_ff @(negedge(rstb) or posedge(clk)) begin
     if (!rstb) begin
-      addr <= '0;
+      reg_addr <= '0;
       reg_rw <= '0;
     end else begin
       if (ena == 1'b1) begin
         if (sample_addr == 1'b1) begin
-          addr <= rx_buffer[ADDR_W-1:0];
+          reg_addr <= rx_buffer[ADDR_W-1:0];
           reg_rw <= rx_buffer[REG_W-1];
         end
       end
@@ -216,20 +213,20 @@ module spi_reg #(
   end
 
   // Data register and data valid strobe
-  logic [REG_W-1:0] data;
-  logic dv;
+  logic [REG_W-1:0] reg_data;
+  logic reg_we;
 
-  // Data and DataValid (dv) Registers
+  // Data and write enable Registers
   always_ff @(negedge(rstb) or posedge(clk)) begin
     if (!rstb) begin
-      data <= '0;
-      dv <= '0;
+      reg_data <= '0;
+      reg_we <= '0;
     end else begin
       if (ena == 1'b1) begin
-        dv <= '0;
+        reg_we <= '0;
         if (sample_data == 1'b1) begin
-          data <= rx_buffer;
-          dv <= (1'b1 & reg_rw);
+          reg_data <= rx_buffer;
+          reg_we <= reg_rw;
         end
       end
     end
@@ -247,12 +244,19 @@ module spi_reg #(
         if (sof == 1'b1) begin
           tx_buffer <= status;
         end else if (tx_buffer_load == 1'b1) begin
-          tx_buffer <= reg_data_i;
+          tx_buffer <= rdata;
         end else if (spi_data_change == 1'b1) begin
           tx_buffer <= {tx_buffer[REG_W-2:0], 1'b0};
         end
       end
     end
   end
+
+  // Map to outputs
+  assign wr_rdn = reg_rw;
+  assign addr = reg_addr;
+  assign wdata = reg_data;
+  assign we = reg_we;
+  assign spi_miso = tx_buffer[REG_W-1];
 
 endmodule
