@@ -30,10 +30,10 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic [REG_WIDTH-1:0] status_int [NUM_STATUS];
   
   // Serial interface
-  spi_reg #(
+  spi_peripheral #(
     .ADDR_W(ADDR_WIDTH),
     .REG_W(REG_WIDTH)
-  ) spi_reg_inst (
+  ) spi_peripheral_i (
     .clk(clk),
     .rstb(rstb),
     .ena(ena),
@@ -42,10 +42,11 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .spi_miso(spi_miso),
     .spi_clk(spi_clk),
     .spi_cs_n(spi_cs_n),
-    .reg_addr(reg_addr),
-    .reg_data_i(reg_data_i),
-    .reg_data_o(reg_data_o),
-    .reg_data_o_dv(reg_data_o_vld),
+    .wr_rdn(),
+    .addr(reg_addr),
+    .rdata(reg_data_i),
+    .wdata(reg_data_o),
+    .we(reg_data_o_vld),
     .status('0)
   );
 
