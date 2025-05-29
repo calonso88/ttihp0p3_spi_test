@@ -84,4 +84,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     assign config_regs[((y+1)*REG_WIDTH-1) : y*REG_WIDTH] = config_mem[y];
   end endgenerate
 
+  // Get rid off lint warning
+  wire _unused = wr_rdn;
+
 endmodule
