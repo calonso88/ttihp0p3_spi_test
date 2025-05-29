@@ -22,10 +22,11 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   localparam int NUM_REGS = NUM_CFG+NUM_STATUS;
   localparam int ADDR_WIDTH = $clog2(NUM_REGS);
 
-  // Auxiliar variables for SPIREG
-  logic [ADDR_WIDTH-1:0] reg_addr;
-  logic [REG_WIDTH-1:0] reg_data_i, reg_data_o;
-  logic reg_data_o_vld;
+  // Auxiliar variables for spi peripheral
+  logic wr_rdn;
+  logic [ADDR_WIDTH-1:0] addr;
+  logic [REG_WIDTH-1:0] rdata, wdata;
+  logic we;
   logic [REG_WIDTH-1:0] config_mem [NUM_CFG];
   logic [REG_WIDTH-1:0] status_int [NUM_STATUS];
   
@@ -43,16 +44,16 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .spi_clk(spi_clk),
     .spi_cs_n(spi_cs_n),
     .wr_rdn(),
-    .addr(reg_addr),
-    .rdata(reg_data_i),
-    .wdata(reg_data_o),
-    .we(reg_data_o_vld),
+    .addr(addr),
+    .rdata(rdata),
+    .wdata(wdata),
+    .we(we),
     .status('0)
   );
 
   // Mux to select CFG or Status Register read access
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
-  assign reg_data_i = (reg_addr[ADDR_WIDTH-1] == 0) ? config_mem[reg_addr[ADDR_WIDTH-2:0]] : status_int[reg_addr[ADDR_WIDTH-2:0]];
+  assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
 
   // Index for reset register array
   int i;
@@ -64,9 +65,9 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
         config_mem[i] <= 0;
       end
     end else begin
-      if (ena == 1'b1) begin
-        if (reg_data_o_vld) begin
-          config_mem[reg_addr[ADDR_WIDTH-2:0]] <= reg_data_o;
+      if (ena) begin
+        if (we) begin
+          config_mem[addr[ADDR_WIDTH-2:0]] <= wdata;
         end
       end
     end

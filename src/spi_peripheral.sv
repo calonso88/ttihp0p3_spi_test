@@ -94,7 +94,7 @@ module spi_peripheral #(
     if (!rstb) begin
       state <= STATE_IDLE;
     end else begin
-      if (ena == 1'b1) begin
+      if (ena) begin
         state <= next_state;
       end
     end
@@ -115,7 +115,7 @@ module spi_peripheral #(
 
     case (state)
       STATE_IDLE : begin
-        if (sof == 1'b1) begin
+        if (sof) begin
           next_state = STATE_ADDR;
         end
       end
@@ -123,16 +123,16 @@ module spi_peripheral #(
         if (buffer_counter == 4'd8) begin
           sample_addr = 1'b1;
           next_state = STATE_CMD;
-        end else if (eof == 1'b1) begin
+        end else if (eof) begin
           next_state = STATE_IDLE;
         end
       end
       STATE_CMD : begin
         if (reg_rw == 1'b0) begin
           next_state = STATE_TX_DATA;
-        end else if (reg_rw == 1'b1) begin
+        end else if (reg_rw) begin
           next_state = STATE_RX_DATA;
-        end else if (eof == 1'b1) begin
+        end else if (eof) begin
           next_state = STATE_IDLE;
         end
       end
@@ -140,7 +140,7 @@ module spi_peripheral #(
         if (buffer_counter == 4'd8) begin
           sample_data = 1'b1;
           next_state = STATE_IDLE;
-        end else if (eof == 1'b1) begin
+        end else if (eof) begin
           next_state = STATE_IDLE;
         end
       end
@@ -149,7 +149,7 @@ module spi_peripheral #(
           tx_buffer_load = 1'b1;
         end else if (buffer_counter == 4'd8) begin
           next_state = STATE_IDLE;
-        end else if (eof == 1'b1) begin
+        end else if (eof) begin
           next_state = STATE_IDLE;
         end
       end
@@ -167,8 +167,8 @@ module spi_peripheral #(
     if (!rstb) begin
       rx_buffer <= '0;
     end else begin
-      if (ena == 1'b1) begin
-        if (spi_data_sample == 1'b1) begin
+      if (ena) begin
+        if (spi_data_sample) begin
           rx_buffer <= {rx_buffer[REG_W-2:0], spi_mosi};
         end
       end
@@ -183,10 +183,10 @@ module spi_peripheral #(
     if (!rstb) begin
       buffer_counter <= '0;
     end else begin
-      if (ena == 1'b1) begin
+      if (ena) begin
         if (buffer_counter == 4'd8) begin
           buffer_counter <= '0;
-        end else if (spi_data_sample == 1'b1) begin
+        end else if (spi_data_sample) begin
           buffer_counter <= buffer_counter + 1'b1;
         end
       end
@@ -203,8 +203,8 @@ module spi_peripheral #(
       reg_addr <= '0;
       reg_rw <= '0;
     end else begin
-      if (ena == 1'b1) begin
-        if (sample_addr == 1'b1) begin
+      if (ena) begin
+        if (sample_addr) begin
           reg_addr <= rx_buffer[ADDR_W-1:0];
           reg_rw <= rx_buffer[REG_W-1];
         end
@@ -222,9 +222,9 @@ module spi_peripheral #(
       reg_data <= '0;
       reg_we <= '0;
     end else begin
-      if (ena == 1'b1) begin
+      if (ena) begin
         reg_we <= '0;
-        if (sample_data == 1'b1) begin
+        if (sample_data) begin
           reg_data <= rx_buffer;
           reg_we <= reg_rw;
         end
@@ -240,12 +240,12 @@ module spi_peripheral #(
     if (!rstb) begin
       tx_buffer <= '0;
     end else begin
-      if (ena == 1'b1) begin
-        if (sof == 1'b1) begin
+      if (ena) begin
+        if (sof) begin
           tx_buffer <= status;
-        end else if (tx_buffer_load == 1'b1) begin
+        end else if (tx_buffer_load) begin
           tx_buffer <= rdata;
-        end else if (spi_data_change == 1'b1) begin
+        end else if (spi_data_change) begin
           tx_buffer <= {tx_buffer[REG_W-2:0], 1'b0};
         end
       end
