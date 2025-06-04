@@ -26,7 +26,13 @@ module tt_um_calonso88_spi_test (
   // Config Regs and Status Regs
   wire [NUM_CFG*REG_WIDTH-1:0] config_regs;
   wire [NUM_STATUS*REG_WIDTH-1:0] status_regs;
-  
+
+  // i2c Auxiliars
+  wire sda_i;
+  wire sda_o;
+  wire sda_oe;
+  wire scl;
+
   // SPI Auxiliars
   wire cpol;
   wire cpha;
@@ -46,6 +52,10 @@ module tt_um_calonso88_spi_test (
   assign cpol = ui_in[0];
   assign cpha = ui_in[1];
 
+  // i2c temporary tie offs
+  assign sda_o  = 1'b0;
+  assign sda_oe = 1'b0;
+
   // Output ports (drive 7seg display) - Config Reg Address 0
   assign uo_out[7:0] = config_regs[7:0];
 
@@ -56,25 +66,37 @@ module tt_um_calonso88_spi_test (
   // output port when spi_cs_n_sync = 1'b0
   assign uio_oe[3]   = spi_cs_n_sync ? 1'b0 : 1'b1;
 
-  // Bi direction IOs [7] and [2:0] unused always as inputs
-  assign uio_oe[7]   = 1'b0;
-  assign uio_oe[2:0] = 3'b000;
+  // Bi direction IOs [1] - Control of i2c SDA
+  // Bi direction IOs [2] - i2c SCL, always input
+  assign uio_oe[1] = sda_oe;
+  assign uio_oe[2] = 1'b0;
 
-  // Bi-directional Input ports
+  // Bi direction IOs [7] and [0] unused - set always as inputs
+  assign uio_oe[7] = 1'b0;
+  assign uio_oe[0] = 1'b0;
+
+  // Bi-directional Input ports i2c
+  assign sda_i = uio_in[1];
+  assign scl   = uio_in[2];
+
+  // Bi-directional Input ports SPI
   assign spi_cs_n  = uio_in[4];
   assign spi_clk   = uio_in[5];
   assign spi_mosi  = uio_in[6];
 
-  // Bi-directional Output ports
+  // Bi-directional Output ports i2c
+  assign uio_out[1] = sda_o;
+  // Bi-directional Output ports SPI
   assign uio_out[3] = spi_miso;
 
   // Bi-directional ouputs unused needs to be assigned to 0.
-  assign uio_out[2:0] = 3'b000;
+  assign uio_out[0] = 1'b0;
+  assign uio_out[2] = 1'b0;
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ui_in[7:2], uio_in[7], uio_in[3:0], config_regs[NUM_CFG*REG_WIDTH-1:8], 1'b0};
-  
+  wire _unused = &{ui_in[7:2], uio_in[7], uio_in[3],uio_in[0], config_regs[NUM_CFG*REG_WIDTH-1:8], 1'b0};
+
   // Number of stages in each synchronizer
   localparam int SYNC_STAGES = 2;
   localparam int SYNC_WIDTH = 1;
@@ -96,7 +118,6 @@ module tt_um_calonso88_spi_test (
   assign status_regs[55:48] = 8'hA5;
   assign status_regs[63:56] = 8'h5A;
   assign status_regs[NUM_STATUS*REG_WIDTH-1:64] = '0;
-  
 
   // SPI wrapper
   spi_wrapper #(.NUM_CFG(NUM_CFG), .NUM_STATUS(NUM_STATUS), .REG_WIDTH(REG_WIDTH)) spi_wrapper_i (.rstb(rst_n), .clk(clk), .ena(ena), .mode({cpol_sync, cpha_sync}), .spi_cs_n(spi_cs_n_sync), .spi_clk(spi_clk_sync), .spi_mosi(spi_mosi_sync), .spi_miso(spi_miso), .config_regs(config_regs), .status_regs(status_regs));
