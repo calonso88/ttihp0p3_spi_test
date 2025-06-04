@@ -6,25 +6,25 @@ module i2c_slave #(
   parameter SLAVE_ADDR = 7'b1110000 // 0x70 (0xE0 and 0xE1)
   )
   (
-    input	clk,
-    input  rst_n,
-    output sda_o,
-    output sda_oe,
-    input  sda_i,
-    input scl,
+    input  logic clk,
+    input  logic rst_n,
+    output logic sda_o,
+    output logic sda_oe,
+    input  logic sda_i,
+    input  logic scl,
 
      // application interface
-     output reg rw,
-     output reg [7:0] addr,
-     output reg wen,
-     output wire [7:0] wdata,
-     output reg rdata_used,
-    input [7:0] rdata
+     output logic rw,
+     output logic [7:0] addr,
+     output logic wen,
+     output logic [7:0] wdata,
+     output logic rdata_used,
+     input  logic [7:0] rdata
   );
 
-  reg pull_sda;
-  reg [3:0] sda_d, scl_d; // sample registers for i2c line debouncing and edge detection
-  wire scl_rise, scl_fall, sda_rise, sda_fall;
+  logic pull_sda;
+  logic [3:0] sda_d, scl_d; // sample registers for i2c line debouncing and edge detection
+  logic scl_rise, scl_fall, sda_rise, sda_fall;
 
   // i2c event enums
   parameter scl_rise_event = 2'b00;
@@ -32,8 +32,8 @@ module i2c_slave #(
   parameter sda_rise_event = 2'b10;
   parameter sda_fall_event = 2'b11;
   
-  reg [1:0] last_event;
-  reg bus_start, bus_stop;
+  logic [1:0] last_event;
+  logic bus_start, bus_stop;
 
   assign sda_o  = 1'b0;
   assign sda_oe = pull_sda;
@@ -44,6 +44,8 @@ module i2c_slave #(
     scl_d <= {scl_d[2:0], scl};
 	  sda_d <= {sda_d[2:0], sda_i};
   end
+
+
   assign scl_rise = (scl_d == 4'b0111);
   assign scl_fall = (scl_d == 4'b1000);
   assign sda_rise = (sda_d == 4'b0111);
@@ -79,7 +81,8 @@ module i2c_slave #(
   parameter read_ack = 4'd9;
 		
   // This FSM tracks the bus transaction and executes the application R/W commands
-  reg [7:0] dbyte;
+  logic [7:0] dbyte;
+  
 	always @(posedge clk) begin
     reg [3:0] state;
     reg addr_ok;
