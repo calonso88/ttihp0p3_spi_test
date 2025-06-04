@@ -49,6 +49,9 @@ module tt_um_calonso88_spi_test (
   wire spi_mosi_sync;
 
   // Peripheral selector
+  // 2'b00 - SPI can access reg bank
+  // 2'b01 - i2c can access reg bank
+  // 2'b1- - SPI and i2c can access reg bank (OR logic)
   wire [1:0] sel;
    
   // Input ports - SPI modes
