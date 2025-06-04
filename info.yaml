@@ -51,8 +51,8 @@ pinout:
 
   # Bidirectional pins
   uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
+  uio[1]: "SDA (bidir)"
+  uio[2]: "SCL (input)"
   uio[3]: "spi_miso"
   uio[4]: "spi_cs_n"
   uio[5]: "spi_clk"
