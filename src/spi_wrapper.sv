@@ -79,6 +79,8 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
   assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
 
+  assign i2c_rdata = rdata; // TODO
+
   // Index for reset register array
   int i;
 
