@@ -79,7 +79,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
   assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
 
-  assign i2c_rdata = rdata; // TODO
+  assign i2c_rdata = '0; // TODO
 
   // Index for reset register array
   int i;
@@ -88,7 +88,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   always_ff @(posedge clk or negedge rstb) begin
     if (!rstb) begin
       for (i = 0; i < NUM_CFG; i++) begin
-        config_mem[i] <= 0;
+        config_mem[i] <= '0;
       end
     end else begin
       if (ena) begin
