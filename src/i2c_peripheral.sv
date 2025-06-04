@@ -13,13 +13,13 @@ module i2c_slave #(
     input  logic sda_i,
     input  logic scl,
 
-     // application interface
-     output logic rw,
-     output logic [7:0] addr,
-     output logic wen,
-     output logic [7:0] wdata,
-     output logic rdata_used,
-     input  logic [7:0] rdata
+    // application interface
+    output logic wr_rdn,
+    output logic [7:0] addr,
+    input  logic [7:0] rdata,
+    output logic [7:0] wdata,
+    output logic we,
+    input  logic [7:0] status
   );
 
   logic pull_sda;
@@ -92,16 +92,14 @@ module i2c_slave #(
 			counter	   <= 4'd0;
 			dbyte		   <= 8'd0;
 			addr    	 <= 8'd0;
-			rw			   <= 1'b1;
-			rdata_used <= 1'b0;
+			wr_rdn		 <= 1'b0;
 			pull_sda 	 <= 1'b0;
-			wen        <= 1'b0;
+			we         <= 1'b0;
 			state	      = reset;
 			addr_ok		 <= 1'b0;
     end else begin
       // default assignments
-      rdata_used <= 1'b0;
-			wen        <= 1'b0;
+			we         <= 1'b0;
 
       // restart engine if start or stop was detected
       if (bus_start || bus_stop)
@@ -149,15 +147,14 @@ module i2c_slave #(
                      // remember that we've seen the address
                      addr_ok <= 1'b1;
                      if (!dbyte[0]) begin
-                       rw <= 1'b0;
+                       wr_rdn <= 1'b1;
                        // and expect the subaddr byte next
                        state = address_r;
                      end else begin
                        // Remember that this is a read transaction
-                       rw <= 1'b1;
+                       wr_rdn <= 1'b0;
                        // Grab data from application snd start the reply transaction
                        dbyte <= rdata;
-                       rdata_used <= 1'b1;
                        state = read_bytes_pre;
                      end // dbyte[0] (read/write)
                    end // falling clock in slave address ack state
@@ -193,7 +190,7 @@ module i2c_slave #(
                              state = write_bytes; // get more bits
                            else begin
                              counter <= 4'd0;
-                             wen     <= 1'b1;
+                             we      <= 1'b1;
                              state	= write_ack;
                            end // counter
                          end // scl_fall
@@ -235,7 +232,6 @@ module i2c_slave #(
                     if (scl_fall) begin
                       // Capture rdata from app
                       dbyte <= rdata;
-                      rdata_used <= 1'b1;
                       state = read_bytes_pre;
                     end // scl_fall in read_ack state
                   end // state read_acq
