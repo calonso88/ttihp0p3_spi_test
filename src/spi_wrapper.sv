@@ -27,8 +27,14 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic [ADDR_WIDTH-1:0] addr;
   logic [REG_WIDTH-1:0] rdata, wdata;
   logic we;
+  
   logic [REG_WIDTH-1:0] config_mem [NUM_CFG];
   logic [REG_WIDTH-1:0] status_int [NUM_STATUS];
+
+  logic i2c_wr_rdn;
+  logic [ADDR_WIDTH-1:0] i2c_addr;
+  logic [REG_WIDTH-1:0] i2c_rdata, i2c_wdata;
+  logic i2c_we;
   
   // Serial interface
   spi_peripheral #(
@@ -51,6 +57,24 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .status('0)
   );
 
+  i2c_peripheral #(
+    .SLAVE_ADDR (7'b1110000)
+  ) i2c_peripheral_i (
+    .clk(clk),
+    .rst_n(rstb),
+    //.ena(ena),
+    .sda_o(),
+    .sda_oe(),
+    .sda_i(1'b0),
+    .scl(1'b0),
+    .wr_rdn(),
+    .addr(i2c_addr),
+    .rdata(i2c_rdata),
+    .wdata(i2c_wdata),
+    .we(i2c_we),
+    .status('0)
+  );
+  
   // Mux to select CFG or Status Register read access
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
   assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
