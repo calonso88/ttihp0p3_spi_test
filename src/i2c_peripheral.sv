@@ -1,8 +1,12 @@
+/*
+ * Copyright (c) 2025 Caio Alonso da Costa
+ * SPDX-License-Identifier: Apache-2.0
+ */
 /////////////////////////////////////////////////////////////////////////
 // I2C slave with one sub-address byte and
 // address auto-increment on the application bus
 /////////////////////////////////////////////////////////////////////////
-module i2c_slave #(
+module i2c_peripheral #(
   parameter SLAVE_ADDR = 7'b1110000 // 0x70 (0xE0 and 0xE1)
   )
   (
