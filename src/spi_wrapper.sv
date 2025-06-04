@@ -32,7 +32,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic [REG_WIDTH-1:0] status_int [NUM_STATUS];
 
   logic i2c_wr_rdn;
-  logic [ADDR_WIDTH+1-1:0] i2c_addr;  // TODO
+  logic [7:0] i2c_addr;  // TODO
   logic [REG_WIDTH-1:0] i2c_rdata, i2c_wdata;
   logic i2c_we;
   
