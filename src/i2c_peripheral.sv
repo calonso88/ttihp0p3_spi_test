@@ -87,7 +87,7 @@ module i2c_peripheral #(
   // This FSM tracks the bus transaction and executes the application R/W commands
   logic [7:0] dbyte;
   
-	always @(posedge clk) begin
+	always @(posedge clk or negedge rst_n) begin
     reg [3:0] state;
     reg addr_ok;
     reg [3:0] counter;
