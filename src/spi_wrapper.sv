@@ -111,6 +111,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   end endgenerate
 
   // Get rid off lint warning
-  wire _unused = &spi_wr_rdn;
+  wire _unused = &{spi_wr_rdn, i2c_wr_rdn, i2c_addr, i2c_wdata, i2c_we 1'b0};
+
 
 endmodule
