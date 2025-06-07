@@ -31,10 +31,17 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic [REG_WIDTH-1:0] config_mem [NUM_CFG];
   logic [REG_WIDTH-1:0] status_int [NUM_STATUS];
 
+  // Auxiliar variables for spi peripheral
   logic i2c_wr_rdn;
   logic [7:0] i2c_addr;  // TODO
   logic [REG_WIDTH-1:0] i2c_rdata, i2c_wdata;
   logic i2c_we;
+
+  // Auxiliar variables for interface register bank
+  logic wr_rdn;
+  logic [7:0] addr; 
+  logic [REG_WIDTH-1:0] rdata, wdata;
+  logic we;
   
   // Serial interface
   spi_peripheral #(
@@ -74,7 +81,17 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .we(i2c_we),
     .status('0)
   );
-  
+
+  // Select peripheral
+  mux #(
+    .WIDTH($bits(we))
+  ) mux_addr_i (
+    .a(spi_we),
+    .b(i2c_we),
+    .sel(1'b0),
+    .dout(we)
+  );
+
   // Mux to select CFG or Status Register read access
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
   assign spi_rdata = (spi_addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[spi_addr[ADDR_WIDTH-2:0]] : status_int[spi_addr[ADDR_WIDTH-2:0]];
