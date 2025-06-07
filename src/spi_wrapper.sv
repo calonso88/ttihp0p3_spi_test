@@ -92,7 +92,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
       end
     end else begin
       if (ena) begin
-        if (we) begin
+        if (spi_we) begin
           config_mem[spi_addr[ADDR_WIDTH-2:0]] <= spi_wdata;
         end
       end
