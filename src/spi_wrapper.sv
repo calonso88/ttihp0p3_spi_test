@@ -21,12 +21,14 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   // Address width for register bank
   localparam int NUM_REGS = NUM_CFG+NUM_STATUS;
   localparam int ADDR_WIDTH = $clog2(NUM_REGS);
+  localparam int ADDR_WIDTH2 = 8;
 
   // Auxiliar variables for spi peripheral
   logic spi_wr_rdn;
   logic [ADDR_WIDTH-1:0] spi_addr;
   logic [REG_WIDTH-1:0] spi_rdata, spi_wdata;
   logic spi_we;
+  logic [ADDR_WIDTH2-1:0] spi_addr2;
   
   logic [REG_WIDTH-1:0] config_mem [NUM_CFG];
   logic [REG_WIDTH-1:0] status_int [NUM_STATUS];
@@ -84,14 +86,17 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
 
   // Select peripheral
   mux #(
-    .WIDTH($bits(we))
+    .WIDTH(1+8+8+1)
   ) mux_addr_i (
-    .a(spi_we),
-    .b(i2c_we),
+    .a({spi_wr_rdn, spi_addr2, spi_wdata, spi_we}),
+    .b({i2c_wr_rdn, i2c_addr,  i2c_wdata, i2c_we}),
     .sel(1'b0),
-    .dout(we)
+    .dout({wr_rdn, addr,  wdata, we})
   );
 
+  // Temp
+  assign spi_addr2 = spi_addr;
+        
   // Mux to select CFG or Status Register read access
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
   assign spi_rdata = (spi_addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[spi_addr[ADDR_WIDTH-2:0]] : status_int[spi_addr[ADDR_WIDTH-2:0]];
