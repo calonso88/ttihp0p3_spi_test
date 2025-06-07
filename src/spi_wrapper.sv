@@ -23,10 +23,10 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   localparam int ADDR_WIDTH = $clog2(NUM_REGS);
 
   // Auxiliar variables for spi peripheral
-  logic wr_rdn;
-  logic [ADDR_WIDTH-1:0] addr;
-  logic [REG_WIDTH-1:0] rdata, wdata;
-  logic we;
+  logic spi_wr_rdn;
+  logic [ADDR_WIDTH-1:0] spi_addr;
+  logic [REG_WIDTH-1:0] spi_rdata, spi_wdata;
+  logic spi_we;
   
   logic [REG_WIDTH-1:0] config_mem [NUM_CFG];
   logic [REG_WIDTH-1:0] status_int [NUM_STATUS];
@@ -49,11 +49,11 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .spi_miso(spi_miso),
     .spi_clk(spi_clk),
     .spi_cs_n(spi_cs_n),
-    .wr_rdn(),
-    .addr(addr),
-    .rdata(rdata),
-    .wdata(wdata),
-    .we(we),
+    .wr_rdn(spi_wr_rdn),
+    .addr(spi_addr),
+    .rdata(spi_rdata),
+    .wdata(spi_wdata),
+    .we(spi_we),
     .status('0)
   );
 
@@ -77,7 +77,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   
   // Mux to select CFG or Status Register read access
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
-  assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
+  assign spi_rdata = (spi_addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[spi_addr[ADDR_WIDTH-2:0]] : status_int[spi_addr[ADDR_WIDTH-2:0]];
 
   assign i2c_rdata = '0; // TODO
 
@@ -93,7 +93,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     end else begin
       if (ena) begin
         if (we) begin
-          config_mem[addr[ADDR_WIDTH-2:0]] <= wdata;
+          config_mem[spi_addr[ADDR_WIDTH-2:0]] <= spi_wdata;
         end
       end
     end
@@ -111,6 +111,6 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   end endgenerate
 
   // Get rid off lint warning
-  wire _unused = wr_rdn;
+  wire _unused = spi_wr_rdn;
 
 endmodule
