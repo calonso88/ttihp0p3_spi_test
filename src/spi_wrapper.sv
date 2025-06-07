@@ -67,7 +67,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .sda_oe(),
     .sda_i(1'b0),
     .scl(1'b0),
-    .wr_rdn(),
+    .wr_rdn(i2c_wr_rdn),
     .addr(i2c_addr),
     .rdata(i2c_rdata),
     .wdata(i2c_wdata),
@@ -111,6 +111,6 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   end endgenerate
 
   // Get rid off lint warning
-  wire _unused = spi_wr_rdn;
+  wire _unused = &spi_wr_rdn;
 
 endmodule
