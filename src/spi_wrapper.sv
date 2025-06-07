@@ -99,7 +99,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
         
   // Mux to select CFG or Status Register read access
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
-  assign spi_rdata = (spi_addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[spi_addr[ADDR_WIDTH-2:0]] : status_int[spi_addr[ADDR_WIDTH-2:0]];
+  assign spi_rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
 
   assign i2c_rdata = '0; // TODO
 
@@ -114,8 +114,8 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
       end
     end else begin
       if (ena) begin
-        if (spi_we) begin
-          config_mem[spi_addr[ADDR_WIDTH-2:0]] <= spi_wdata;
+        if (we) begin
+          config_mem[addr[ADDR_WIDTH-2:0]] <= wdata;
         end
       end
     end
