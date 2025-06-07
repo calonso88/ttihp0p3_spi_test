@@ -35,7 +35,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
 
   // Auxiliar variables for spi peripheral
   logic i2c_wr_rdn;
-  logic [7:0] i2c_addr;  // TODO
+  logic [7:0] i2c_addr;
   logic [REG_WIDTH-1:0] i2c_rdata, i2c_wdata;
   logic i2c_we;
 
@@ -96,12 +96,12 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
 
   // Temp
   assign spi_addr2 = spi_addr;
-        
+
   // Mux to select CFG or Status Register read access
   // This imposes a limitation that NUM_CFG and NUM_STATUS have to have the same VALUE!
-  assign spi_rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
-
-  assign i2c_rdata = '0; // TODO
+  assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_mem[addr[ADDR_WIDTH-2:0]] : status_int[addr[ADDR_WIDTH-2:0]];
+  assign spi_rdata = rdata;
+  assign i2c_rdata = rdata;
 
   // Index for reset register array
   int i;
