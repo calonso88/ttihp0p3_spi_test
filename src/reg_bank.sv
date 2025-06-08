@@ -20,8 +20,25 @@ module reg_bank #(
     output logic              err
 );
 
+  logic config 
+
   assign ack = 1'b1;
   assign err = '0;
-  assign rdata = '0;
+  assign rdata = config[addr];
+
+  // Register write
+  always_ff @(posedge clk or negedge rstb) begin
+    if (!rstb) begin
+      for (i = 0; i < 8; i++) begin
+        config[i] <= '0;
+      end
+    end else begin
+      if (ena) begin
+        if (we) begin
+          config[addr] <= wdata;
+        end
+      end
+    end
+  end
 
 endmodule
