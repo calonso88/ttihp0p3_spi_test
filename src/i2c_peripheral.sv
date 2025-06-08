@@ -12,11 +12,12 @@ module i2c_peripheral #(
   (
     input  logic clk,
     input  logic rst_n,
+    input  logic ena,
+    // i2c interface
     output logic sda_o,
     output logic sda_oe,
     input  logic sda_i,
     input  logic scl,
-
     // application interface
     output logic wr_rdn,
     output logic [7:0] addr,
@@ -46,7 +47,7 @@ module i2c_peripheral #(
   // Require three consecutive identical samples to identify a proper edge:
   always @(posedge clk) begin
     scl_d <= {scl_d[2:0], scl};
-	  sda_d <= {sda_d[2:0], sda_i};
+    sda_d <= {sda_d[2:0], sda_i};
   end
 
 
@@ -54,14 +55,14 @@ module i2c_peripheral #(
   assign scl_fall = (scl_d == 4'b1000);
   assign sda_rise = (sda_d == 4'b0111);
   assign sda_fall = (sda_d == 4'b1000);
-	
+  
   // Remember previous events
   always @(posedge clk)
     if (scl_rise)
        last_event <= scl_rise_event;
     else if (scl_fall)
        last_event <= scl_fall_event;
-    else if	(sda_rise)
+    else if  (sda_rise)
        last_event <= sda_rise_event;
     else if (sda_fall)
        last_event <= sda_fall_event;
@@ -83,33 +84,33 @@ module i2c_peripheral #(
   parameter read_bytes_pre = 4'd7;
   parameter read_bytes_f = 4'd8;
   parameter read_ack = 4'd9;
-		
+    
   // This FSM tracks the bus transaction and executes the application R/W commands
   logic [7:0] dbyte;
   
-	always @(posedge clk or negedge rst_n) begin
+  always @(posedge clk or negedge rst_n) begin
     reg [3:0] state;
     reg addr_ok;
     reg [3:0] counter;
     
     if (!rst_n) begin
-			counter	   <= 4'd0;
-			dbyte		   <= 8'd0;
-			addr    	 <= 8'd0;
-			wr_rdn		 <= 1'b0;
-			pull_sda 	 <= 1'b0;
-			we         <= 1'b0;
-			state	      = reset;
-			addr_ok		 <= 1'b0;
+      counter     <= 4'd0;
+      dbyte       <= 8'd0;
+      addr       <= 8'd0;
+      wr_rdn     <= 1'b0;
+      pull_sda    <= 1'b0;
+      we         <= 1'b0;
+      state        = reset;
+      addr_ok     <= 1'b0;
     end else begin
       // default assignments
-			we         <= 1'b0;
+      we         <= 1'b0;
 
       // restart engine if start or stop was detected
       if (bus_start || bus_stop)
-				state = reset;
+        state = reset;
       case (state)
-	      reset: begin
+        reset: begin
                    pull_sda <= 1'b0;
                    counter  <= 4'd0;
                    dbyte    <= 8'd0;
@@ -119,12 +120,12 @@ module i2c_peripheral #(
                    end
         
         address_r:  begin
-                      pull_sda	<= 1'b0;
+                      pull_sda  <= 1'b0;
                       if (scl_rise) begin
                         dbyte <= {dbyte[6:0], sda_d[0]}; // shift in data bit
-		                    state = address_f;
-			                  counter <= counter + 1'b1;
-		                   end // scl_rise
+                        state = address_f;
+                        counter <= counter + 1'b1;
+                       end // scl_rise
                      end // state address_r
 
         address_f: begin
@@ -141,8 +142,8 @@ module i2c_peripheral #(
                if (!addr_ok) begin
                  // We haven't seen the slave address yet, so this must be it
                  if (dbyte[7:1] != SLAVE_ADDR)
-		               state = reset; // not our message
-		             else begin
+                   state = reset; // not our message
+                 else begin
                    // This is our I2C address
                    // Acknowledge it
                    pull_sda <= 1'b1;
@@ -179,23 +180,23 @@ module i2c_peripheral #(
              end // state ack
         
         write_bytes: begin
-                       pull_sda	<= 1'b0;
+                       pull_sda  <= 1'b0;
                        if (scl_rise) begin
                          dbyte <= {dbyte[6:0] , sda_d[0]}; // shift in data bit
                          state = write_bytes_f;
                          counter <= counter + 1'b1;
                        end // scl_rise
                      end // state write_bytes
-	
+  
         write_bytes_f: begin
-                         pull_sda	<= 1'b0;
+                         pull_sda  <= 1'b0;
                          if (scl_fall) begin
                            if (counter < 4'd8)
                              state = write_bytes; // get more bits
                            else begin
                              counter <= 4'd0;
                              we      <= 1'b1;
-                             state	= write_ack;
+                             state  = write_ack;
                            end // counter
                          end // scl_fall
                        end // state write_bytes_f
@@ -241,7 +242,7 @@ module i2c_peripheral #(
                   end // state read_acq
 
         default: state = reset;
-			endcase // FSM state
+      endcase // FSM state
     end // rst
   end
 
