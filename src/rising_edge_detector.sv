@@ -18,7 +18,7 @@ module rising_edge_detector (rstb, clk, ena, data, pos_edge);
     if (!rstb) begin
       data_dly <= '0;
     end else begin
-      if (ena == 1'b1) begin
+      if (ena) begin
         data_dly <= data;
       end
     end
