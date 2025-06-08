@@ -498,14 +498,14 @@ async def test_project(dut):
         assert reg5 == data5
         assert reg6 == data6
         assert reg7 == data7
-        #assert s_reg0 == 0xCA
-        #assert s_reg1 == 0x10
-        #assert s_reg2 == 0xAA
-        #assert s_reg3 == 0x55
-        #assert s_reg4 == 0xFF
-        #assert s_reg5 == 0x00
-        #assert s_reg6 == 0xA5
-        #assert s_reg7 == 0x5A
+        assert s_reg0 == 0xCA
+        assert s_reg1 == 0x10
+        assert s_reg2 == 0xAA
+        assert s_reg3 == 0x55
+        assert s_reg4 == 0xFF
+        assert s_reg5 == 0x00
+        assert s_reg6 == 0xA5
+        assert s_reg7 == 0x5A
 
         iterations = iterations + 1
 
@@ -606,14 +606,14 @@ async def test_project(dut):
         assert reg5 == data5
         assert reg6 == data6
         assert reg7 == data7
-        #assert s_reg0 == 0xCA
-        #assert s_reg1 == 0x10
-        #assert s_reg2 == 0xAA
-        #assert s_reg3 == 0x55
-        #assert s_reg4 == 0xFF
-        #assert s_reg5 == 0x00
-        #assert s_reg6 == 0xA5
-        #assert s_reg7 == 0x5A
+        assert s_reg0 == 0xCA
+        assert s_reg1 == 0x10
+        assert s_reg2 == 0xAA
+        assert s_reg3 == 0x55
+        assert s_reg4 == 0xFF
+        assert s_reg5 == 0x00
+        assert s_reg6 == 0xA5
+        assert s_reg7 == 0x5A
 
         iterations = iterations + 1
 
@@ -712,14 +712,14 @@ async def test_project(dut):
         assert reg5 == data5
         assert reg6 == data6
         assert reg7 == data7
-        #assert s_reg0 == 0xCA
-        #assert s_reg1 == 0x10
-        #assert s_reg2 == 0xAA
-        #assert s_reg3 == 0x55
-        #assert s_reg4 == 0xFF
-        #assert s_reg5 == 0x00
-        #assert s_reg6 == 0xA5
-        #assert s_reg7 == 0x5A
+        assert s_reg0 == 0xCA
+        assert s_reg1 == 0x10
+        assert s_reg2 == 0xAA
+        assert s_reg3 == 0x55
+        assert s_reg4 == 0xFF
+        assert s_reg5 == 0x00
+        assert s_reg6 == 0xA5
+        assert s_reg7 == 0x5A
 
         iterations = iterations + 1
 
@@ -820,14 +820,14 @@ async def test_project(dut):
         assert reg5 == data5
         assert reg6 == data6
         assert reg7 == data7
-        #assert s_reg0 == 0xCA
-        #assert s_reg1 == 0x10
-        #assert s_reg2 == 0xAA
-        #assert s_reg3 == 0x55
-        #assert s_reg4 == 0xFF
-        #assert s_reg5 == 0x00
-        #assert s_reg6 == 0xA5
-        #assert s_reg7 == 0x5A
+        assert s_reg0 == 0xCA
+        assert s_reg1 == 0x10
+        assert s_reg2 == 0xAA
+        assert s_reg3 == 0x55
+        assert s_reg4 == 0xFF
+        assert s_reg5 == 0x00
+        assert s_reg6 == 0xA5
+        assert s_reg7 == 0x5A
 
         iterations = iterations + 1
 
