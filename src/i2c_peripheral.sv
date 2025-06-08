@@ -50,12 +50,11 @@ module i2c_peripheral #(
     sda_d <= {sda_d[2:0], sda_i};
   end
 
-
   assign scl_rise = (scl_d == 4'b0111);
   assign scl_fall = (scl_d == 4'b1000);
   assign sda_rise = (sda_d == 4'b0111);
   assign sda_fall = (sda_d == 4'b1000);
-  
+
   // Remember previous events
   always @(posedge clk)
     if (scl_rise)
@@ -87,12 +86,12 @@ module i2c_peripheral #(
     
   // This FSM tracks the bus transaction and executes the application R/W commands
   logic [7:0] dbyte;
-  
+
   always @(posedge clk or negedge rst_n) begin
     reg [3:0] state;
     reg addr_ok;
     reg [3:0] counter;
-    
+
     if (!rst_n) begin
       counter     <= 4'd0;
       dbyte       <= 8'd0;
@@ -118,7 +117,7 @@ module i2c_peripheral #(
                    if (bus_start)
                      state = address_r;
                    end
-        
+
         address_r:  begin
                       pull_sda  <= 1'b0;
                       if (scl_rise) begin
@@ -136,7 +135,7 @@ module i2c_peripheral #(
                        else
                         state = ack;
                     end //state address_f
-      
+
         ack: begin
                counter <= 4'b0;
                if (!addr_ok) begin
@@ -178,7 +177,7 @@ module i2c_peripheral #(
                  end // falling clock in subaddr ack state
                end // addr_ok
              end // state ack
-        
+
         write_bytes: begin
                        pull_sda  <= 1'b0;
                        if (scl_rise) begin
@@ -187,7 +186,7 @@ module i2c_peripheral #(
                          counter <= counter + 1'b1;
                        end // scl_rise
                      end // state write_bytes
-  
+
         write_bytes_f: begin
                          pull_sda  <= 1'b0;
                          if (scl_fall) begin
@@ -200,7 +199,7 @@ module i2c_peripheral #(
                            end // counter
                          end // scl_fall
                        end // state write_bytes_f
-        
+
         write_ack: begin
                      pull_sda <= 1'b1;
                      if (scl_fall) begin
@@ -215,7 +214,7 @@ module i2c_peripheral #(
                           addr <= addr+1; // allow application to prepare for the next access
                           state = read_bytes_f;
                         end // state read_bytes_pre
-        
+
         read_bytes_f: begin
                         pull_sda <= (dbyte[7] == 1'b0);
                         if (scl_rise)
