@@ -35,6 +35,8 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic [REG_WIDTH-1:0] addr; 
   logic [REG_WIDTH-1:0] rdata, wdata;
   logic we;
+  logic ack;
+  logic err;
 
   localparam int NUM_REGS = NUM_CFG+NUM_STATUS;
   localparam int ADDR_REG_BANK_W = $clog2(NUM_REGS);
@@ -108,8 +110,8 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .rdata(rdata),
     .wdata(wdata),
     .we(we),
-    .ack(),
-    .err(),
+    .ack(ack),
+    .err(err),
     .rw_regs(config_regs),
     .ro_regs(status_regs)
   );
@@ -119,6 +121,6 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   assign i2c_rdata = rdata;
 
   // List all unused inputs to prevent warnings
-  logic _unused = &{spi_addr[REG_WIDTH-1:ADDR_REG_BANK_W], 1'b0};
+  logic _unused = &{spi_addr[REG_WIDTH-1:ADDR_REG_BANK_W], addr[REG_WIDTH-1:ADDR_REG_BANK_W], ack, err, 1'b0};
   
 endmodule
