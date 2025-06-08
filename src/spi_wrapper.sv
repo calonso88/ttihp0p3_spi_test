@@ -105,7 +105,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .ena(ena),
     .wr_rdn(wr_rdn),
     .addr(addr_reg_bank),
-    .rdata(),
+    .rdata(rdata),
     .wdata(wdata),
     .we(we),
     .ack(),
