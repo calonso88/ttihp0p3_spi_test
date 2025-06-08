@@ -248,6 +248,6 @@ module i2c_peripheral #(
   assign wdata = dbyte;
 
   // List all unused inputs to prevent warnings
-  logic _unused = &{status, 1'b0};
+  logic _unused = &{status, ena, 1'b0};
 
 endmodule
