@@ -69,6 +69,7 @@ module tt_um_calonso88_spi_test (
 
   // Bi direction IOs [6:4] (cs_n, sclk, mosi) always as inputs
   assign uio_oe[6:4] = 3'b000;
+
   // Bi direction IOs [3] - (miso) is controlled by spi_cs_n_sync
   // input port when spi_cs_n_sync = 1'b1
   // output port when spi_cs_n_sync = 1'b0
