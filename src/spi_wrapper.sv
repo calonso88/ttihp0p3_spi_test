@@ -96,7 +96,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   
   reg_bank #(
     .REG_W(REG_WIDTH),
-    .ADDR_W($clog2(NUM_CFG+NUM_STATUS)),
+    .ADDR_W(ADDR_REG_BANK_W),
     .NUM_CFG(NUM_CFG),
     .NUM_STATUS(NUM_STATUS)
   ) reg_bank_i (
