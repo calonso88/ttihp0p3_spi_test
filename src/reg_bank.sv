@@ -21,22 +21,22 @@ module reg_bank #(
 );
 
   // rw registers
-  logic [REG_W-1:0] config [ADDR_W-1:0];
+  logic [REG_W-1:0] config_reg [ADDR_W-1:0];
 
   assign ack = 1'b1;
   assign err = '0;
-  assign rdata = config[addr];
+  assign rdata = config_reg[addr];
 
   // Register write
   always_ff @(posedge clk or negedge rstb) begin
     if (!rstb) begin
       for (i = 0; i < 8; i++) begin
-        config[i] <= '0;
+        config_reg[i] <= '0;
       end
     end else begin
       if (ena) begin
         if (we) begin
-          config[addr] <= wdata;
+          config_reg[addr] <= wdata;
         end
       end
     end
