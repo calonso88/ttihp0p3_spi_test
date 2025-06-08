@@ -41,7 +41,7 @@ module reg_bank #(
   assign err = 1'b0;
 
   // Mux to select config registers or read only registers access
-  assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_regs[addr[ADDR_WIDTH-2:0]] : status_regs[addr[ADDR_WIDTH-2:0]];
+  assign rdata = (addr[ADDR_W-1] == 1'b0) ? config_regs[addr[ADDR_W-2:0]] : status_regs[addr[ADDR_W-2:0]];
 
   // Register write
   always_ff @(posedge clk or negedge rstb) begin
