@@ -4,25 +4,28 @@
  */
 
 module spi_peripheral #(
-    parameter int ADDR_W = 3,
     parameter int REG_W = 8
 ) (
-    input  logic 	      clk,
-    input  logic 	      rstb,
-    input  logic 	      ena,
+    input  logic clk,
+    input  logic rstb,
+    input  logic ena,
+
     // serial interface
-    input  logic [1:0]        mode,
-    input  logic 	      spi_mosi,
-    output logic 	      spi_miso,
-    input  logic 	      spi_clk,
-    input  logic 	      spi_cs_n,
+    input  logic spi_mosi,
+    output logic spi_miso,
+    input  logic spi_clk,
+    input  logic spi_cs_n,
+    // CPOL and CPHA
+    input  logic [1:0] mode,
+    // first byte in frame
+    input  logic [REG_W-1:0] status
+
     // application interface
-    output logic              wr_rdn,
-    output logic [ADDR_W-1:0] addr,
-    input  logic [REG_W-1:0]  rdata,
-    output logic [REG_W-1:0]  wdata,
-    output logic 	      we,
-    input  logic [7:0] 	      status
+    output logic             wr_rdn,
+    output logic [REG_W-2:0] addr,
+    input  logic [REG_W-1:0] rdata,
+    output logic [REG_W-1:0] wdata,
+    output logic             we
 );
 
   // Start of frame - negedge of spi_cs_n
@@ -194,7 +197,7 @@ module spi_peripheral #(
   end
 
   // Addr and Read/Write Command register
-  logic [ADDR_W-1:0] reg_addr;
+  logic [REG_W-2:0] reg_addr;
   logic reg_rw;
 
   // Addr and Read/Write Command Registers
@@ -205,7 +208,7 @@ module spi_peripheral #(
     end else begin
       if (ena) begin
         if (sample_addr) begin
-          reg_addr <= rx_buffer[ADDR_W-1:0];
+          reg_addr <= rx_buffer[REG_W-2:0];
           reg_rw <= rx_buffer[REG_W-1];
         end
       end
