@@ -52,17 +52,13 @@ module tt_um_calonso88_spi_test (
   // 1'b0 - SPI can access reg bank
   // 1'b1 - i2c can access reg bank
   wire sel;
-   
+
   // Input ports - SPI modes
   assign cpol = ui_in[0];
   assign cpha = ui_in[1];
 
   // Input ports - peripheral selector
   assign sel = ui_in[7];
-
-  // i2c temporary tie offs
-  assign i2c_sda_o  = 1'b0;
-  assign i2c_sda_oe = 1'b0;
 
   // Output ports (drive 7seg display) - Config Reg Address 0
   assign uo_out[7:0] = rw_regs[7:0];
