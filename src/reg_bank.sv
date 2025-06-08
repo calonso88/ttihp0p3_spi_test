@@ -23,3 +23,5 @@ module reg_bank #(
   assign ack = 1'b1;
   assign err = '0;
   assign rdata = '0;
+
+endmodule
