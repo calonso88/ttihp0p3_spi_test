@@ -79,7 +79,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   ) i2c_peripheral_i (
     .clk(clk),
     .rst_n(rstb),
-    //.ena(ena),
+    .ena(ena),
     .sda_o(i2c_sda_o),
     .sda_oe(i2c_sda_oe),
     .sda_i(i2c_sda_i),
