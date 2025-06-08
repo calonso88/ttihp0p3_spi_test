@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Your Name
+ * Copyright (c) 2025 Caio Alonso da Costa
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -49,17 +49,16 @@ module tt_um_calonso88_spi_test (
   wire spi_mosi_sync;
 
   // Peripheral selector
-  // 2'b00 - SPI can access reg bank
-  // 2'b01 - i2c can access reg bank
-  // 2'b1- - SPI and i2c can access reg bank (OR logic)
-  wire [1:0] sel;
+  // 1'b0 - SPI can access reg bank
+  // 1'b1 - i2c can access reg bank
+  wire sel;
    
   // Input ports - SPI modes
   assign cpol = ui_in[0];
   assign cpha = ui_in[1];
 
   // Input ports - peripheral selector
-  assign sel = ui_in[7:6];
+  assign sel = ui_in[7];
 
   // i2c temporary tie offs
   assign sda_o  = 1'b0;
@@ -104,7 +103,7 @@ module tt_um_calonso88_spi_test (
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ui_in[5:2], uio_in[7], uio_in[3],uio_in[0], config_regs[NUM_CFG*REG_WIDTH-1:8], 1'b0};
+  wire _unused = &{ui_in[6:2], uio_in[7], uio_in[3],uio_in[0], config_regs[NUM_CFG*REG_WIDTH-1:8], 1'b0};
 
   // Number of stages in each synchronizer
   localparam int SYNC_STAGES = 2;
