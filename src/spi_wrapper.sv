@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, sel, config_regs, status_regs);
+module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, i2c_sda_o, i2c_sda_oe, i2c_sda_i, i2c_scl, sel, rw_regs, ro_regs);
 
   input  logic rstb;
   input  logic clk;
@@ -14,11 +14,16 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   input  logic spi_clk;
   input  logic spi_mosi;
   output logic spi_miso;
+  // i2c peripheral
+  output logic i2c_sda_o;
+  output logic i2c_sda_oe;
+  input  logic i2c_sda_i;
+  input  logic i2c_scl;
   // Peripheral selector
   input  logic sel;
   // RW and RO registers
-  output logic [NUM_CFG*REG_WIDTH-1:0] config_regs;
-  input  logic [NUM_STATUS*REG_WIDTH-1:0] status_regs;
+  output logic [NUM_CFG*REG_WIDTH-1:0] rw_regs;
+  input  logic [NUM_STATUS*REG_WIDTH-1:0] ro_regs;
 
   // Auxiliar variables for spi peripheral
   logic spi_wr_rdn;
@@ -75,10 +80,10 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .clk(clk),
     .rst_n(rstb),
     //.ena(ena),
-    .sda_o(),
-    .sda_oe(),
-    .sda_i(1'b0),
-    .scl(1'b0),
+    .sda_o(i2c_sda_o),
+    .sda_oe(i2c_sda_oe),
+    .sda_i(i2c_sda_i),
+    .scl(i2c_scl),
     .wr_rdn(i2c_wr_rdn),
     .addr(i2c_addr),
     .rdata(i2c_rdata),
@@ -117,8 +122,8 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .we(we),
     .ack(ack),
     .err(err),
-    .rw_regs(config_regs),
-    .ro_regs(status_regs)
+    .rw_regs(rw_regs),
+    .ro_regs(ro_regs)
   );
 
   // Provide read data to both peripherals
