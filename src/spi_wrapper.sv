@@ -37,7 +37,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic we;
 
   localparam int NUM_REGS = NUM_CFG+NUM_STATUS;
-  localparam int ADDR_REG_BANK_W = $clog(NUM_REGS);
+  localparam int ADDR_REG_BANK_W = $clog2(NUM_REGS);
   logic [ADDR_REG_BANK_W-1:0] addr_reg_bank;
   
   // Tied extra bit off as SPI peripheral only provides 7 address bits
