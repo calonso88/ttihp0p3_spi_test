@@ -118,4 +118,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   assign spi_rdata = rdata;
   assign i2c_rdata = rdata;
 
+  // List all unused inputs to prevent warnings
+  logic _unused = &{spi_addr[REG_WIDTH-1:ADDR_REG_BANK_W], 1'b0};
+  
 endmodule
