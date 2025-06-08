@@ -22,6 +22,7 @@ project:
     - "reclocking.sv"
     - "synchronizer.sv"
     - "mux.sv"
+    - "reg_bank.sv"
     - "spi_peripheral.sv"
     - "falling_edge_detector.sv"
     - "rising_edge_detector.sv"
