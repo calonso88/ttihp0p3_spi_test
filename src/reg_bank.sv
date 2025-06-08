@@ -4,48 +4,71 @@
  */
 
 module reg_bank #(
+    parameter int REG_W = 8,
     parameter int ADDR_W = 8,
-    parameter int REG_W = 8
+    parameter int NUM_CFG = 8,
+    parameter int NUM_STATUS = 8
 ) (
-    input  logic 	      clk,
-    input  logic 	      rstb,
-    input  logic 	      ena,
+    input  logic clk,
+    input  logic rstb,
+    input  logic ena,
     // application interface
-    input  logic              wr_rdn,
+    input  logic wr_rdn,
     input  logic [ADDR_W-1:0] addr,
     output logic [REG_W-1:0]  rdata,
     input  logic [REG_W-1:0]  wdata,
-    input  logic              we,
-    output logic              ack,
-    output logic              err
+    input  logic we,
+    output logic ack,
+    output logic err,
+    // registers
+    output logic [NUM_CFG*REG_W-1:0] rw_regs,
+    input  logic [NUM_STATUS*REG_W-1:0] ro_regs
 );
 
-  // Iterate
+  // Limitations
+  //  - NUM_CFG must be power of two
+  //  - NUM_STATUS must be equal to NUM_CFG
+  
+  // Iterator
   int i;
 
   // rw registers
-  logic [REG_W-1:0] config_reg [ADDR_W-1:0];
-
+  logic [REG_W-1:0] config_regs [NUM_CFG-1:0];
+  logic [REG_W-1:0] status_regs [NUM_STATUS-1:0];
+  
   // handshake
   assign ack = 1'b1;
-  assign err = '0;
+  assign err = 1'b0;
 
-  // Read mux
-  assign rdata = config_reg[addr];
+  // Mux to select config registers or read only registers access
+  assign rdata = (addr[ADDR_WIDTH-1] == 1'b0) ? config_regs[addr[ADDR_WIDTH-2:0]] : status_regs[addr[ADDR_WIDTH-2:0]];
 
   // Register write
   always_ff @(posedge clk or negedge rstb) begin
     if (!rstb) begin
-      for (i = 0; i < 8; i++) begin
-        config_reg[i] <= '0;
+      for (i = 0; i < NUM_CFG; i++) begin
+        config_regs[i] <= '0;
       end
     end else begin
       if (ena) begin
         if (we) begin
-          config_reg[addr] <= wdata;
+          if (addr < NUM_CFG) begin
+            config_regs[addr] <= wdata;
+          end
         end
       end
     end
   end
 
+  // Generate variable
+  genvar x, y;
+  // Convert to unpacked array
+  generate for (x = 0; x < NUM_STATUS; x = x + 1) begin
+    assign status_regs[x] = ro_regs[((x+1)*REG_W-1) : x*REG_W];
+  end endgenerate
+  // Convert to 1 dimension packed array
+  generate for (y = 0; y < NUM_CFG; y = y + 1) begin
+    assign rw_regs[((y+1)*REG_W-1) : y*REG_W] = config_regs[y];
+  end endgenerate
+  
 endmodule
