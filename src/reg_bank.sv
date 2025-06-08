@@ -20,11 +20,17 @@ module reg_bank #(
     output logic              err
 );
 
+  // Iterate
+  int i;
+
   // rw registers
   logic [REG_W-1:0] config_reg [ADDR_W-1:0];
 
+  // handshake
   assign ack = 1'b1;
   assign err = '0;
+
+  // Read mux
   assign rdata = config_reg[addr];
 
   // Register write
