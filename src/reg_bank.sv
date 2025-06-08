@@ -15,7 +15,7 @@ module reg_bank #(
     input  logic [ADDR_W-1:0] addr,
     output logic [REG_W-1:0]  rdata,
     input  logic [REG_W-1:0]  wdata,
-    input  logic              we
+    input  logic              we,
     output logic              ack,
     output logic              err
 );
