@@ -18,7 +18,7 @@ module spi_peripheral #(
     // CPOL and CPHA
     input  logic [1:0] mode,
     // first byte in frame
-    input  logic [REG_W-1:0] status
+    input  logic [REG_W-1:0] status,
 
     // application interface
     output logic             wr_rdn,
