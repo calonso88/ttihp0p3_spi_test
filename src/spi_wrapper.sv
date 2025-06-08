@@ -8,13 +8,15 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   input  logic rstb;
   input  logic clk;
   input  logic ena;
-
+  // spi peripheral
   input  logic [1:0] mode;
   input  logic spi_cs_n;
   input  logic spi_clk;
   input  logic spi_mosi;
   output logic spi_miso;
-
+  // Peripheral selector
+  input  logic sel;
+  // RW and RO registers
   output logic [NUM_CFG*REG_WIDTH-1:0] config_regs;
   input  logic [NUM_STATUS*REG_WIDTH-1:0] status_regs;
 
@@ -24,7 +26,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic [REG_WIDTH-1:0] spi_rdata, spi_wdata;
   logic spi_we;
   
-  // Auxiliar variables for spi peripheral
+  // Auxiliar variables for i2c peripheral
   logic i2c_wr_rdn;
   logic [REG_WIDTH-1:0] i2c_addr;
   logic [REG_WIDTH-1:0] i2c_rdata, i2c_wdata;
@@ -38,6 +40,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   logic ack;
   logic err;
 
+  // Auxiliar params
   localparam int NUM_REGS = NUM_CFG+NUM_STATUS;
   localparam int ADDR_REG_BANK_W = $clog2(NUM_REGS);
   logic [ADDR_REG_BANK_W-1:0] addr_reg_bank;
@@ -65,6 +68,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .status('0)
   );
 
+  // i2c peripheral
   i2c_peripheral #(
     .SLAVE_ADDR (7'b1110000)
   ) i2c_peripheral_i (
@@ -95,7 +99,8 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
 
   // Use only the address bits required for NUM_CFG+NUM_STATUS registers
   assign addr_reg_bank = addr[ADDR_REG_BANK_W-1:0];
-  
+
+  // Register bank
   reg_bank #(
     .REG_W(REG_WIDTH),
     .ADDR_W(ADDR_REG_BANK_W),
