@@ -244,7 +244,10 @@ module i2c_peripheral #(
 			endcase // FSM state
     end // rst
   end
-	
+
   assign wdata = dbyte;
+
+  // List all unused inputs to prevent warnings
+  logic _unused = &{wr_rdn, 1'b0};
 
 endmodule
