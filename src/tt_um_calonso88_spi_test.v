@@ -24,14 +24,14 @@ module tt_um_calonso88_spi_test (
   localparam int REG_WIDTH = 8;
 
   // Config Regs and Status Regs
-  wire [NUM_CFG*REG_WIDTH-1:0] config_regs;
-  wire [NUM_STATUS*REG_WIDTH-1:0] status_regs;
+  wire [NUM_CFG*REG_WIDTH-1:0] rw_regs;
+  wire [NUM_STATUS*REG_WIDTH-1:0] ro_regs;
 
   // i2c Auxiliars
-  wire sda_i;
-  wire sda_o;
-  wire sda_oe;
-  wire scl;
+  wire i2c_sda_i;
+  wire i2c_sda_o;
+  wire i2c_sda_oe;
+  wire i2c_scl;
 
   // SPI Auxiliars
   wire cpol;
@@ -61,11 +61,11 @@ module tt_um_calonso88_spi_test (
   assign sel = ui_in[7];
 
   // i2c temporary tie offs
-  assign sda_o  = 1'b0;
-  assign sda_oe = 1'b0;
+  assign i2c_sda_o  = 1'b0;
+  assign i2c_sda_oe = 1'b0;
 
   // Output ports (drive 7seg display) - Config Reg Address 0
-  assign uo_out[7:0] = config_regs[7:0];
+  assign uo_out[7:0] = rw_regs[7:0];
 
   // Bi direction IOs [6:4] (cs_n, sclk, mosi) always as inputs
   assign uio_oe[6:4] = 3'b000;
@@ -73,11 +73,11 @@ module tt_um_calonso88_spi_test (
   // Bi direction IOs [3] - (miso) is controlled by spi_cs_n_sync
   // input port when spi_cs_n_sync = 1'b1
   // output port when spi_cs_n_sync = 1'b0
-  assign uio_oe[3]   = spi_cs_n_sync ? 1'b0 : 1'b1;
+  assign uio_oe[3] = spi_cs_n_sync ? 1'b0 : 1'b1;
 
   // Bi direction IOs [1] - Control of i2c SDA
   // Bi direction IOs [2] - i2c SCL, always input
-  assign uio_oe[1] = sda_oe;
+  assign uio_oe[1] = i2c_sda_oe;
   assign uio_oe[2] = 1'b0;
 
   // Bi direction IOs [7] and [0] unused - set always as inputs
@@ -85,8 +85,8 @@ module tt_um_calonso88_spi_test (
   assign uio_oe[0] = 1'b0;
 
   // Bi-directional Input ports i2c
-  assign sda_i = uio_in[1];
-  assign scl   = uio_in[2];
+  assign i2c_sda_i = uio_in[1];
+  assign i2c_scl   = uio_in[2];
 
   // Bi-directional Input ports SPI
   assign spi_cs_n  = uio_in[4];
@@ -94,7 +94,7 @@ module tt_um_calonso88_spi_test (
   assign spi_mosi  = uio_in[6];
 
   // Bi-directional Output ports i2c
-  assign uio_out[1] = sda_o;
+  assign uio_out[1] = i2c_sda_o;
   // Bi-directional Output ports SPI
   assign uio_out[3] = spi_miso;
 
@@ -104,7 +104,7 @@ module tt_um_calonso88_spi_test (
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ui_in[6:2], uio_in[7], uio_in[3], uio_in[0], config_regs[NUM_CFG*REG_WIDTH-1:8], 1'b0};
+  wire _unused = &{ui_in[6:2], uio_in[7], uio_in[3], uio_in[0], rw_regs[NUM_CFG*REG_WIDTH-1:8], 1'b0};
 
   // Number of stages in each synchronizer
   localparam int SYNC_STAGES = 2;
@@ -118,15 +118,15 @@ module tt_um_calonso88_spi_test (
   synchronizer #(.STAGES(SYNC_STAGES), .WIDTH(SYNC_WIDTH)) synchronizer_spi_mosi_inst (.rstb(rst_n), .clk(clk), .ena(ena), .data_in(spi_mosi), .data_out(spi_mosi_sync));
 
   // Assign status
-  assign status_regs[7:0]   = 8'hCA;
-  assign status_regs[15:8]  = 8'h10;
-  assign status_regs[23:16] = 8'hAA;
-  assign status_regs[31:24] = 8'h55;
-  assign status_regs[39:32] = 8'hFF;
-  assign status_regs[47:40] = 8'h00;
-  assign status_regs[55:48] = 8'hA5;
-  assign status_regs[63:56] = 8'h5A;
-  //assign status_regs[NUM_STATUS*REG_WIDTH-1:64] = '0;
+  assign ro_regs[7:0]   = 8'hCA;
+  assign ro_regs[15:8]  = 8'h10;
+  assign ro_regs[23:16] = 8'hAA;
+  assign ro_regs[31:24] = 8'h55;
+  assign ro_regs[39:32] = 8'hFF;
+  assign ro_regs[47:40] = 8'h00;
+  assign ro_regs[55:48] = 8'hA5;
+  assign ro_regs[63:56] = 8'h5A;
+  //assign ro_regs[NUM_STATUS*REG_WIDTH-1:64] = '0;
 
   // SPI wrapper
   spi_wrapper #(
@@ -142,9 +142,13 @@ module tt_um_calonso88_spi_test (
     .spi_clk(spi_clk_sync),
     .spi_mosi(spi_mosi_sync),
     .spi_miso(spi_miso),
+    .i2c_sda_o(i2c_sda_o),
+    .i2c_sda_oe(i2c_sda_oe),
+    .i2c_sda_i(i2c_sda_i),
+    .i2c_scl(i2c_scl),
     .sel(sel),
-    .config_regs(config_regs),
-    .status_regs(status_regs)
+    .rw_regs(rw_regs),
+    .ro_regs(ro_regs)
   );
 
 endmodule
