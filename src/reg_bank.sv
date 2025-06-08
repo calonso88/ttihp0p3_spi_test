@@ -19,3 +19,7 @@ module reg_bank #(
     output logic              ack,
     output logic              err
 );
+
+  assign ack = 1'b1;
+  assign err = '0;
+  assign rdata = '0;
