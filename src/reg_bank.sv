@@ -68,5 +68,8 @@ module reg_bank #(
   generate for (y = 0; y < NUM_CFG; y = y + 1) begin
     assign rw_regs[((y+1)*REG_W-1) : y*REG_W] = config_regs[y];
   end endgenerate
-  
+
+  // List all unused inputs to prevent warnings
+  logic _unused = &{wr_rdn, 1'b0};
+
 endmodule
