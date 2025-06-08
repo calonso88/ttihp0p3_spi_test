@@ -18,7 +18,7 @@ module reclocking #(parameter int WIDTH = 4) (rstb, clk, ena, data_in, data_out)
     if (!rstb) begin
       data_sync <= '0;
     end else begin
-      if (ena == 1'b1) begin
+      if (ena) begin
         data_sync <= data_in;
       end
     end
