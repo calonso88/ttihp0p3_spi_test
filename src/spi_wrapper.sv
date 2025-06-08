@@ -94,6 +94,22 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .dout({wr_rdn, addr,  wdata, we})
   );
 
+  reg_bank #(
+    .ADDR_W(8),
+    .REG_W(8)
+  ) reg_bank_i (
+    .clk(clk),
+    .rstb(rstb),
+    .ena(ena),
+    .wr_rdn(wr_rdn),
+    .addr(addr),
+    .rdata(),
+    .wdata(wdata),
+    .we(we),
+    .ack(),
+    .err()
+  );
+
   // Temp
   assign spi_addr2 = spi_addr;
 
