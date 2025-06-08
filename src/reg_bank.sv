@@ -21,7 +21,7 @@ module reg_bank #(
 );
 
   // rw registers
-  logic [REG_W-1:0] config [ADDR_W-1:0]
+  logic [REG_W-1:0] config [ADDR_W-1:0];
 
   assign ack = 1'b1;
   assign err = '0;
