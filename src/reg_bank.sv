@@ -52,9 +52,7 @@ module reg_bank #(
     end else begin
       if (ena) begin
         if (we) begin
-          if (addr < NUM_CFG) begin
-            config_regs[addr] <= wdata;
-          end
+          config_regs[ADDR_W-2:0] <= wdata;
         end
       end
     end
