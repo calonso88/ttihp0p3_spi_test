@@ -129,6 +129,22 @@ module tt_um_calonso88_spi_test (
   //assign status_regs[NUM_STATUS*REG_WIDTH-1:64] = '0;
 
   // SPI wrapper
-  spi_wrapper #(.NUM_CFG(NUM_CFG), .NUM_STATUS(NUM_STATUS), .REG_WIDTH(REG_WIDTH)) spi_wrapper_i (.rstb(rst_n), .clk(clk), .ena(ena), .mode({cpol_sync, cpha_sync}), .spi_cs_n(spi_cs_n_sync), .spi_clk(spi_clk_sync), .spi_mosi(spi_mosi_sync), .spi_miso(spi_miso), .config_regs(config_regs), .status_regs(status_regs));
+  spi_wrapper #(
+    .NUM_CFG(NUM_CFG),
+    .NUM_STATUS(NUM_STATUS),
+    .REG_WIDTH(REG_WIDTH)
+  ) spi_wrapper_i (
+    .rstb(rst_n),
+    .clk(clk),
+    .ena(ena),
+    .mode({cpol_sync, cpha_sync}),
+    .spi_cs_n(spi_cs_n_sync),
+    .spi_clk(spi_clk_sync),
+    .spi_mosi(spi_mosi_sync),
+    .spi_miso(spi_miso),
+    .sel(sel),
+    .config_regs(config_regs),
+    .status_regs(status_regs)
+  );
 
 endmodule
