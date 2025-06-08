@@ -52,7 +52,7 @@ module reg_bank #(
     end else begin
       if (ena) begin
         if (we) begin
-          config_regs[ADDR_W-2:0] <= wdata;
+          config_regs[addr[ADDR_W-2:0]] <= wdata;
         end
       end
     end
