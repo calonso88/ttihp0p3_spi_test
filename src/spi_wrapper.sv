@@ -26,7 +26,7 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   
   // Auxiliar variables for spi peripheral
   logic i2c_wr_rdn;
-  logic [REG_WDITH-1:0] i2c_addr;
+  logic [REG_WIDTH-1:0] i2c_addr;
   logic [REG_WIDTH-1:0] i2c_rdata, i2c_wdata;
   logic i2c_we;
 
