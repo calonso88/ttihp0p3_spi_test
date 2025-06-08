@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, config_regs, status_regs);
+module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, sel, config_regs, status_regs);
 
   input  logic rstb;
   input  logic clk;
@@ -85,15 +85,15 @@ module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
 
   // Select peripheral
   mux #(
-    .WIDTH(1+8+8+1)
+    .WIDTH(1+REG_WIDTH+REG_WIDTH+1)
   ) mux_addr_i (
     .a({spi_wr_rdn, spi_addr, spi_wdata, spi_we}),
     .b({i2c_wr_rdn, i2c_addr, i2c_wdata, i2c_we}),
-    .sel(1'b0),
+    .sel(sel),
     .dout({wr_rdn, addr,  wdata, we})
   );
 
-  // Only take the address bits required for NUM_CFG+NUM_STATUS registers
+  // Use only the address bits required for NUM_CFG+NUM_STATUS registers
   assign addr_reg_bank = addr[ADDR_REG_BANK_W-1:0];
   
   reg_bank #(
