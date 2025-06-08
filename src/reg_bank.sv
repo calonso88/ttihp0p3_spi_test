@@ -20,7 +20,8 @@ module reg_bank #(
     output logic              err
 );
 
-  logic config 
+  // rw registers
+  logic [REG_W-1:0] config [ADDR_W-1:0]
 
   assign ack = 1'b1;
   assign err = '0;
