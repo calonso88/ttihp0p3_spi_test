@@ -404,6 +404,12 @@ async def test_project(dut):
 
     # Wait for some time
     await ClockCycles(dut.clk, 10)
+
+    # Select peripheral
+    # SPI = 0, I2C = 1
+    dut.ui_in.value = (0 << 7)
+    
+    # Wait for some time
     await ClockCycles(dut.clk, 10)
 
     # Config CPOL and CPHA
