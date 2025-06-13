@@ -9,7 +9,15 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-SPI test design based from https://github.com/calonso88/tt07_alu_74181
+Register bank accessible throught two different serial interfaces: SPI and I2C. Use digital input to select prefered interface.
+
+There are 8 read/write 8 bit registers and 8 read only 8 bit registers.
+
+Address 0 (first byte in read/write register space) drives the 7 segment display.
+
+Digital input ui_in[7] = 0 selects SPI and  ui_in[7] = 1 selects I2C.
+
+SPI peripheral design based on https://github.com/calonso88/tt07_alu_74181
 
 See that design's docs for information about the SPI peripheral.
 
@@ -20,9 +28,12 @@ This has reduced 4 flip flops in total and some combinatorial logic as well.
 Added logic to control driver for MISO. On previous submissions of this design, the MISO was always driven.
 Logic has been added to put MISO into high impedance when CS_N is driven high. Due to a 2-stage synchronizer, the MISO goes to high impedance after 2 clock cycles.
 
-Design been configured with 8 read/write 8 bit registers and 8 read only 8 bit status registers.
 
-The first read/write register also drives the 7 segment display.
+I2C peripheral design based on https://github.com/sanojn/tt06_ttrpg_dice
+
+See that design's docs for information about the I2C peripheral.
+
+
 
 ## How to test
 
@@ -57,6 +68,8 @@ spi_cs(0); spi.write(b'\x00'); spi.read(1); spi_cs(1)
 ```
 
 The result should be 0xF8 or whatever you wrote to address[0].
+
+TODO: I2C.
 
 ## External hardware
 
