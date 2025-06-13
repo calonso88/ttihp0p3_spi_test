@@ -124,12 +124,12 @@ module tt_um_calonso88_spi_test (
   assign ro_regs[63:56] = 8'h5A;
   //assign ro_regs[NUM_STATUS*REG_WIDTH-1:64] = '0;
 
-  // SPI wrapper
-  spi_wrapper #(
+  // top wrapper
+  top_wrapper #(
     .NUM_CFG(NUM_CFG),
     .NUM_STATUS(NUM_STATUS),
     .REG_WIDTH(REG_WIDTH)
-  ) spi_wrapper_i (
+  ) top_wrapper_i (
     .rstb(rst_n),
     .clk(clk),
     .ena(ena),
