@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-module spi_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, i2c_sda_o, i2c_sda_oe, i2c_sda_i, i2c_scl, sel, rw_regs, ro_regs);
+module top_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, i2c_sda_o, i2c_sda_oe, i2c_sda_i, i2c_scl, sel, rw_regs, ro_regs);
 
   input  logic rstb;
   input  logic clk;
