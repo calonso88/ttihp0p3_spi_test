@@ -148,7 +148,7 @@ module spi_peripheral #(
         end
       end
       STATE_TX_DATA : begin
-        if (buffer_counter == 4'd0) begin
+        if (buffer_counter == '0) begin
           tx_buffer_load = 1'b1;
         end else if (buffer_counter == REG_W) begin
           next_state = STATE_IDLE;
