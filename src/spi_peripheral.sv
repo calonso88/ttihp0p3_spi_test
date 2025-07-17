@@ -123,7 +123,7 @@ module spi_peripheral #(
         end
       end
       STATE_ADDR : begin
-        if (buffer_counter == 4'd8) begin
+        if (buffer_counter == REG_W) begin
           sample_addr = 1'b1;
           next_state = STATE_CMD;
         end else if (eof) begin
@@ -140,7 +140,7 @@ module spi_peripheral #(
         end
       end
       STATE_RX_DATA : begin
-        if (buffer_counter == 4'd8) begin
+        if (buffer_counter == REG_W) begin
           sample_data = 1'b1;
           next_state = STATE_IDLE;
         end else if (eof) begin
@@ -150,7 +150,7 @@ module spi_peripheral #(
       STATE_TX_DATA : begin
         if (buffer_counter == 4'd0) begin
           tx_buffer_load = 1'b1;
-        end else if (buffer_counter == 4'd8) begin
+        end else if (buffer_counter == REG_W) begin
           next_state = STATE_IDLE;
         end else if (eof) begin
           next_state = STATE_IDLE;
@@ -187,7 +187,7 @@ module spi_peripheral #(
       buffer_counter <= '0;
     end else begin
       if (ena) begin
-        if (buffer_counter == 4'd8) begin
+        if (buffer_counter == REG_W) begin
           buffer_counter <= '0;
         end else if (spi_data_sample) begin
           buffer_counter <= buffer_counter + 1'b1;
